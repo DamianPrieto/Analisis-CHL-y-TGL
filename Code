@@ -1,0 +1,207 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import statsmodels.api as sm
+import matplotlib.pyplot as plt
+
+#Abrimos la base de datos
+df = pd.read_csv("DF_CHL_TGL_EJEMPLO.csv")
+
+#Grupo/Equipo,Concentración de colesterol (mg/dL),Concentración de triglicéridos (mg/dL),Edad,Sexo,IMC,Condición de salud,Horas de ayuno,Notas
+
+# Estandarisamos los nombres para manejar los datos
+df = df.rename(columns={ 'Concentración de colesterol (mg/dL)' : 'CHL',
+                        'Concentración de triglicéridos (mg/dL)' : 'TGL',
+                         'Horas de ayuno' : 'AYUNO',
+                         'Edad' : 'EDAD',
+                         'Condición de salud' : 'SALUD',
+                         'Notas' : 'NOTAS',
+                         'Sexo' : 'SEXO'  })
+
+
+#filtramos si la persona es sana
+df['SALUD'] = df['SALUD'].astype(str).str.extract(r"(\b[Ss][a]\w+)")
+df = df.dropna(subset=["SALUD"])
+
+#filtramos la cantidad de ayuno (minimo 8 horas) y un IMC entre 18.5 – 24.9	
+
+
+df["AYUNO"] = df["AYUNO"].astype(str).str.lower().str.strip()
+df["AYUNO_HORAS"] = df["AYUNO"].str.extract(r"(\d+)")
+df["AYUNO_HORAS"] = pd.to_numeric(df["AYUNO_HORAS"], errors="coerce")
+
+# Detectar frases o símbolos que implican que si hubo ayuno
+frases_positivas = ["si","-"]
+
+df["AYUNO_TEXTUAL"] = df["AYUNO"].apply(
+    lambda x: any(p in x for p in frases_positivas)
+)
+
+df = df[(df["AYUNO_HORAS"] >= 8) | (df["AYUNO_TEXTUAL"])]
+
+
+df = df.dropna(subset=["IMC"])
+df['IMC'] = df['IMC'].astype(float)
+df = df[(df['IMC'] >= 18.5)&(df['IMC'] <= 24.9)]
+
+#transformamos CHL y TGL a float
+df['CHL'] = pd.to_numeric(df['CHL'].astype(str).str.replace(',', '.'), errors='coerce')
+df['TGL'] = pd.to_numeric(df['TGL'].astype(str).str.replace(',', '.'), errors='coerce')
+df = df.dropna(subset=['CHL', 'TGL'])
+
+df_datos = df[['CHL', 'TGL', 'EDAD', 'AYUNO_HORAS', 'AYUNO_TEXTUAL','IMC', 'SALUD', 'SEXO']]
+
+# Colesterol
+media_chl = df_datos["CHL"].mean()
+std_chl = df_datos["CHL"].std()
+mediana_CHL = df_datos["CHL"].median()
+moda_CHL = df_datos["CHL"].mode().iloc[0]
+LI_CHL = media_chl - 2*std_chl
+LS_CHL = media_chl + 2*std_chl
+
+# Aplica logaritmo natural
+TGL = df_datos["TGL"].dropna()
+log_tgl = np.log(TGL)
+
+
+# Triglicéridos
+media_log_tgl = log_tgl.mean()
+std_log_tgl = log_tgl.std()
+mediana_log_tgl = log_tgl.median()
+moda_log_tgl = log_tgl.mode().iloc[0]
+
+
+print(f"Colesterol - Media: {media_chl:.2f}, Desviación estándar: {std_chl:.2f}, Mediana: {mediana_CHL:.2f}, Moda: {moda_CHL:.2f}, valor de referencia: [{LI_CHL:.2f}-{LS_CHL:.2f}] ")
+
+print(f"Triglicéridos - Media: {media_log_tgl:.2f}, Desviación estándar: {std_log_tgl:.2f}, Mediana: {mediana_log_tgl:.2f}, Moda: {moda_log_tgl:.2f}")
+
+# --- Estadísticos en escala real para TGL (a partir del logaritmo) ---
+
+mu = media_log_tgl
+sigma = std_log_tgl
+
+# Media real
+media_real_tgl = np.exp(mu + ((sigma**2) / 2))
+
+# Mediana real
+mediana_real_tgl = np.exp(mu)
+
+# Moda real
+moda_real_tgl = np.exp(mu - sigma**2)
+
+# Desviación estándar real
+std_real_tgl = np.sqrt((np.exp(sigma**2) - 1) * np.exp(2*mu + sigma**2))
+
+
+# Imprimir resultados
+print("\n--- Estadísticos reales de Triglicéridos (mg/dL) ---")
+print(f"Media real: {media_real_tgl:.2f}")
+print(f"Mediana real: {mediana_real_tgl:.2f}")
+print(f"Moda real: {moda_real_tgl:.2f}")
+print(f"Desviación estándar real: {std_real_tgl:.2f}")
+
+# Filtrar para excluir valores atípicos ( >240 mg/dL)
+TGL_filtrado = df_datos[(df_datos['TGL'] <= 240)]['TGL']
+
+# Calcular percentiles no paramétricos
+LI, LS = np.percentile(TGL_filtrado, [2.5, 97.5])
+
+print(f"Intervalo de referencia robusto: [{LI:.2f}, {LS:.2f}] mg/dL")
+#print(df_datos)
+
+# Calculo del coeficiente de correlacion dependiendo del IMC
+
+correlacion_chl = df_datos['CHL'].corr(df_datos['IMC'])
+print("Coeficiente de correlación CHL con IMC:", correlacion_chl)
+
+correlacion_TGL = df_datos['TGL'].corr(df_datos['IMC'])
+print("Coeficiente de correlación TGL con IMC:", correlacion_TGL)
+
+#Graficando 
+
+bins = np.arange(0, 1000, 10)  # de 100 a 220 en pasos de 10
+
+
+# --- Figura 1: Histograma CHL ---
+
+fig1, axs1 = plt.subplots(1, 2, num='1', figsize=(12, 5))
+
+# Histograma CHL simple
+sns.histplot(df["CHL"].dropna(), bins=bins, ax=axs1[0], color="skyblue", edgecolor="black")
+axs1[0].set_title("Colesterol en estudiantes de biomédica sanos")
+axs1[0].set_xlabel("Colesterol (mg/dL)")
+axs1[0].set_ylabel("Frecuencia")
+axs1[0].tick_params(axis='x', rotation=45)
+axs1[0].set_xlim(0, 350)
+
+# Histograma CHL con KDE y líneas estadísticas
+sns.histplot(df["CHL"].dropna(), bins=bins, kde=True, ax=axs1[1], color="salmon", edgecolor="black")
+axs1[1].set_title("Distribución del colesterol en estudiantes de biomédica")
+axs1[1].set_xlabel("Colesterol (mg/dL)")
+axs1[1].set_ylabel("Frecuencia")
+axs1[1].tick_params(axis='x', rotation=45)
+axs1[1].set_xlim(0, 350)
+
+# Líneas de media y ±2σ
+axs1[1].axvline(media_chl, color="red", linestyle="--", label="Media")
+axs1[1].axvline(media_chl + 2*std_chl, color="gray", linestyle="--", label="+2σ")
+axs1[1].axvline(media_chl - 2*std_chl, color="gray", linestyle="--", label="-2σ")
+axs1[1].legend()
+
+plt.tight_layout()
+
+# --- Figura 2: Histograma TGL y log(TGL) ---
+
+fig2, axs2 = plt.subplots(1, 2, num='2', figsize=(12, 5))
+
+# Histograma TGL original
+sns.histplot(df_datos["TGL"].dropna(), kde = True ,bins=bins, ax=axs2[0], color="skyblue", edgecolor="black")
+axs2[0].set_title("Triglicéridos en estudiantes de biomédica sanos")
+axs2[0].set_xlabel("Triglicéridos (mg/dL)")
+axs2[0].set_ylabel("Frecuencia")
+axs2[0].tick_params(axis='x', rotation=45)
+axs2[0].set_xlim(0, 350)
+
+# Histograma TGL log-transformado
+sns.histplot(log_tgl, kde = True, bins=np.arange(0, 10, 1), ax=axs2[1], color="salmon", edgecolor="black")  # Para log, menos bins mejor
+axs2[1].set_title("Logaritmo de triglicéridos en estudiantes de biomédica")
+axs2[1].set_xlabel("log(Triglicéridos)")
+axs2[1].set_ylabel("Frecuencia")
+axs2[1].tick_params(axis='x', rotation=45)
+# Líneas de media y ±2σ
+axs2[1].axvline(media_log_tgl, color="red", linestyle="--", label="Media")
+axs2[1].axvline(media_log_tgl + 2*std_log_tgl, color="gray", linestyle="--", label="+2σ")
+axs2[1].axvline(media_log_tgl - 2*std_log_tgl, color="gray", linestyle="--", label="-2σ")
+axs2[1].legend()
+
+plt.tight_layout()
+
+# Datos limpios (sin NaN)
+tgl_limpios = df_datos["TGL"].dropna().values
+chl_limpios = df_datos["CHL"].dropna().values
+
+# Crear figura con 2 subgráficos (1 fila, 2 columnas)
+fig, axes = plt.subplots(1, 3, figsize=(14, 5))
+
+#Gráfico Q-Q para TGL 
+sm.qqplot(tgl_limpios, line='s', ax=axes[0], color='red', marker='o')
+axes[0].set_title("Q-Q de Triglicéridos (TGL) sin transformacion", fontsize=12)
+axes[0].set_xlabel("Cuantiles Teóricos", fontsize=10)
+axes[0].set_ylabel("Cuantiles Observados", fontsize=10)
+
+#Gráfico Q-Q para CHL 
+sm.qqplot(chl_limpios, line='s', ax=axes[1], color='blue', marker='o')
+axes[1].set_title("Q-Q de Colesterol (CHL)", fontsize=12)
+axes[1].set_xlabel("Cuantiles Teóricos", fontsize=10)
+axes[1].set_ylabel("Cuantiles Observados", fontsize=10)
+
+#Grafico Q-Q para TGL transformados
+sm.qqplot(log_tgl, line='s', ax=axes[2], color='red', marker='o')
+axes[2].set_title("Q-Q de Triglicéridos (TGL) con transformacion", fontsize=12)
+axes[2].set_xlabel("Cuantiles Teóricos", fontsize=10)
+axes[2].set_ylabel("Cuantiles Observados", fontsize=10)
+
+# Ajustar espaciado y mostrar figura
+plt.tight_layout()
+plt.show()
