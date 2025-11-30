@@ -25,9 +25,15 @@ Mediana: 104.08
 Moda: 21.98
 Desviación estándar: 437.78
 
-![Comparativa de graficas Q-Q](https://github.com/Daitiki/Analisis-CHL-y-TGL/blob/a9111fb7beb4c716004cdaac2b2b331134429575/Imagenes/Q-Q%20TGL%20Y%20CHL%20NOV.png)
+![Analisís de Normalidad](https://github.com/Daitiki/Analisis-CHL-y-TGL/blob/a9111fb7beb4c716004cdaac2b2b331134429575/Imagenes/Q-Q%20TGL%20Y%20CHL%20NOV.png)
 
 En esta imagen se puede observar que para la distribucion de trigliceridos, se obtuvo una distribucion logaritmica, por lo cual su tratamiento podría ser utilizando una conversion de datos a escala logaritmica y si la desviasion estandar es muy grande considerar utilizar metodos parametricos
 En cambio, para el colesterol se encontro una distribucion normal, por lo cual se utilizaran los tratamientos normales sin ninguna conversion
 
+Para el analisís de colesterol se obtuvo el siguiente histograma.
+![Distribusion de CHL](https://github.com/Daitiki/Analisis-CHL-y-TGL/blob/ab5f66dca739a323448d08414a8bac57ac0c3c95/Imagenes/CHL%20DISTRIBUCION.png)
 
+Obteniendo un valor de referencia de: [**51.59 - 268.89**]
+
+Para el analisís de trigliceridos se obtuvo el siguietne histograma.
+![Distribusion de CHL](Imagenes/TGL%20DISTRIBUCION.png)
