@@ -37,3 +37,23 @@ Obteniendo un valor de referencia de: [**51.59 - 268.89**]
 
 Para el analisís de trigliceridos se obtuvo el siguietne histograma.
 ![Distribusion de CHL](Imagenes/TGL%20DISTRIBUCION.png)
+
+Utilizando un metodo no parametrico se obtuvo un valor de referencia de: [**8.56 - 221.91**]
+
+### Comparativa con Estándares Clínicos:
+- **Colesterol**: Dentro de rangos normales (NOM: <200 mg/dL deseable)
+- **Triglicéridos**: **Valor promedio elevado** (NOM: <150 mg/dL normal)
+
+##  Relevancia Clínica
+
+Los niveles elevados de triglicéridos en población universitaria aparentemente sana sugieren:
+- Posibles factores de riesgo cardiovascular tempranos
+- Necesidad de programas de prevención en población joven
+- Importancia de establecer valores de referencia específicos por población
+
+## Habilidades Demostradas
+
+- **Programación**: Python, Pandas, Matplotlib
+- **Estadística Médica**: Transformaciones, intervalos de referencia, análisis de distribución
+- **Visualización**: Gráficos Q-Q, histogramas, análisis de normalidad
+- **Interpretación Clínica**: Contextualización de hallazgos biomédicos
