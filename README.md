@@ -25,7 +25,7 @@ Mediana: 104.08
 Moda: 21.98
 Desviación estándar: 437.78
 
-![Comparativa de graficas Q-Q](Imagenes/Q-Q TGL Y CHL NOV.png)
+![Comparativa de graficas Q-Q](https://github.com/Daitiki/Analisis-CHL-y-TGL/blob/a9111fb7beb4c716004cdaac2b2b331134429575/Imagenes/Q-Q%20TGL%20Y%20CHL%20NOV.png)
 
 En esta imagen se puede observar que para la distribucion de trigliceridos, se obtuvo una distribucion logaritmica, por lo cual su tratamiento podría ser utilizando una conversion de datos a escala logaritmica y si la desviasion estandar es muy grande considerar utilizar metodos parametricos
 En cambio, para el colesterol se encontro una distribucion normal, por lo cual se utilizaran los tratamientos normales sin ninguna conversion
