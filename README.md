@@ -40,7 +40,7 @@ Debido a la naturaleza asimétrica de los triglicéridos, se reportan los estad�
 
 ### Visualización y Normalidad
 
-![Análisis de Normalidad](https://github.com/Daitiki/Analisis-CHL-y-TGL/raw/main/Imagenes/Q-Q%20TGL%20Y%20CHL%20NOV.png)
+![Análisis de Normalidad](https://github.com/DamianPrieto/Analisis-CHL-y-TGL/raw/main/Imagenes/Q-Q%20TGL%20Y%20CHL%20NOV.png)
 
 Como se observa en los gráficos Q-Q:
 * **Colesterol:** Sigue una distribución normal teórica.
@@ -49,10 +49,10 @@ Como se observa en los gráficos Q-Q:
 #### Histogramas de Distribución
 
 **Colesterol Total:**
-![Distribución de CHL](https://github.com/Daitiki/Analisis-CHL-y-TGL/raw/main/Imagenes/CHL%20DISTRIBUCION.png)
+![Distribución de CHL](https://github.com/DamianPrieto/Analisis-CHL-y-TGL/raw/main/Imagenes/CHL%20DISTRIBUCION.png)
 
 **Triglicéridos:**
-![Distribución de TGL](https://github.com/Daitiki/Analisis-CHL-y-TGL/raw/main/Imagenes/TGL%20DISTRIBUCION.png)
+![Distribución de TGL](https://github.com/DamianPrieto/Analisis-CHL-y-TGL/raw/main/Imagenes/TGL%20DISTRIBUCION.png)
 
 ## Comparativa con Estándares Clínicos (NOM)
 
