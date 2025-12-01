@@ -60,8 +60,11 @@ moda_CHL = df_datos["CHL"].mode().iloc[0]
 LI_CHL = media_chl - 2*std_chl
 LS_CHL = media_chl + 2*std_chl
 
+# Filtrar para excluir valores atípicos ( >240 mg/dL)
+TGL_filtrado = df_datos[(df_datos['TGL'] <= 240)]['TGL']
+
 # Aplica logaritmo natural
-TGL = df_datos["TGL"].dropna()
+TGL = TGL_filtrado.dropna()
 log_tgl = np.log(TGL)
 
 
@@ -100,9 +103,6 @@ print(f"Media real: {media_real_tgl:.2f}")
 print(f"Mediana real: {mediana_real_tgl:.2f}")
 print(f"Moda real: {moda_real_tgl:.2f}")
 print(f"Desviación estándar real: {std_real_tgl:.2f}")
-
-# Filtrar para excluir valores atípicos ( >240 mg/dL)
-TGL_filtrado = df_datos[(df_datos['TGL'] <= 240)]['TGL']
 
 # Calcular percentiles no paramétricos
 LI, LS = np.percentile(TGL_filtrado, [2.5, 97.5])
